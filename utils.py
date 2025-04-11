@@ -1,17 +1,14 @@
-import joblib  
-import numpy as np  
-from tensorflow.keras.models import load_model  
+from tensorflow.keras.models import load_model
+import joblib
+import numpy as np
 
-# Load model and scaler  
-model = load_model("lstm_model.h5")  
-scaler = joblib.load("scaler.pkl")  
+model = load_model("lstm_model.h5")
+scaler = joblib.load("scaler.pkl")
 
-def preprocess_input(user_input):  
-    input_array = np.array(user_input).reshape(1, -1)  
-    input_scaled = scaler.transform(input_array)  
-    input_reshaped = input_scaled.reshape(1, 1, -1)  
-    return input_reshaped  
+def preprocess_input(user_input):
+    values = np.array([float(x.strip()) for x in user_input.split(",")]).reshape(1, -1)
+    return scaler.transform(values)
 
-def predict_intrusion(input_data):  
-    prediction = model.predict(input_data)[0][0]  
+def predict_intrusion(preprocessed_input):
+    prediction = model.predict(preprocessed_input)
     return prediction
